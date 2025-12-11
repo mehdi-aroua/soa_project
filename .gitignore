@@ -1,0 +1,66 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker
+.dockerignore
+
+# Build
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Mobile app
+mobile-app/.git/
+
+# Services
+services/*/target/
+services/*/venv/
+services/*/node_modules/
+
+# API Gateway
+services/api-gateway/target/
+
+# Auth service
+services/auth-service/__pycache__/
+services/auth-service/data/
+
+# Student service
+services/student-service/__pycache__/
+services/student-service/data/
+
+# Course service
+services/course-service/out/
+services/course-service/lib/
+services/course-service/jaxws-ri/
