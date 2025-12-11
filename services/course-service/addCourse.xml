@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                   xmlns:cour="http://course.university.com/">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <cour:addCourse>
+            <id>3</id>
+            <name>Base de Données</name>
+            <teacher>M. Karim</teacher>
+        </cour:addCourse>
+    </soapenv:Body>
+</soapenv:Envelope>

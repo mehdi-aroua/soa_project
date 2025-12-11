@@ -1,0 +1,11 @@
+target/
+*.class
+*.jar
+*.war
+*.ear
+bin/
+.git/
+.mvn/
+**/.DS_Store
+# Keep jaxws libs; exclude large archive
+jaxws-ri.zip

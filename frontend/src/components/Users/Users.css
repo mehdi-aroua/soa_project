@@ -1,0 +1,49 @@
+.users-container {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.users-header {
+    margin-bottom: 2rem;
+}
+
+.users-header h1 {
+    margin: 0;
+}
+
+.users-table-container {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+
+.users-table {
+    width: 100%;
+}
+
+.users-table th {
+    background: var(--bg-tertiary);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.users-table td {
+    padding: 1rem;
+    border-top: 1px solid var(--bg-tertiary);
+}
+
+.users-table tbody tr {
+    transition: background var(--transition-fast);
+}
+
+.users-table tbody tr:hover {
+    background: rgba(99, 102, 241, 0.05);
+}
+
+@media (max-width: 768px) {
+    .users-table-container {
+        overflow-x: auto;
+    }
+}

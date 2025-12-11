@@ -1,0 +1,65 @@
+services:
+  auth-service:
+    build:
+      context: ../services/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    environment:
+      - AUTH_DATABASE_URL=sqlite:///./data/auth.db
+      - AUTH_JWT_SECRET=dev_secret
+      - AUTH_ACCESS_EXPIRE_MINUTES=15
+      - AUTH_REFRESH_EXPIRE_DAYS=7
+    ports:
+      - "8001:8001"
+    volumes:
+      - auth-data:/app/data
+    networks:
+      - soa-net
+
+  student-service:
+    build:
+      context: ../services/student-service
+      dockerfile: Dockerfile
+    container_name: student-service
+    environment:
+      - STUD_DATABASE_URL=sqlite:///./data/students.db
+    ports:
+      - "8100:8100"
+    volumes:
+      - student-data:/app/data
+    networks:
+      - soa-net
+
+  course-service:
+    build:
+      context: ../services/course-service
+      dockerfile: Dockerfile
+    container_name: course-service
+    ports:
+      - "8200:8200"
+    networks:
+      - soa-net
+
+  api-gateway:
+    build:
+      context: ../services/api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    depends_on:
+      - auth-service
+      - student-service
+      - course-service
+    ports:
+      - "8080:8080"
+    networks:
+      - soa-net
+
+networks:
+  soa-net:
+    driver: bridge
+
+volumes:
+  student-data:
+    driver: local
+  auth-data:
+    driver: local

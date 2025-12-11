@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                   xmlns:cour="http://course.university.com/">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <cour:getCourse>
+            <id>1</id>
+        </cour:getCourse>
+    </soapenv:Body>
+</soapenv:Envelope>
