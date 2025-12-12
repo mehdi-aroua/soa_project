@@ -4,7 +4,7 @@ Interface React.js moderne pour le système de gestion universitaire basé sur u
 
 ## 🚀 Technologies Utilisées
 
-- **React 18** - Framework UI
+- **React 19** - Framework UI
 - **Vite** - Build tool et dev server
 - **React Router** - Navigation
 - **Axios** - Client HTTP
@@ -18,6 +18,98 @@ Interface React.js moderne pour le système de gestion universitaire basé sur u
 - ✅ Connexion avec JWT
 - ✅ Gestion des tokens (access & refresh)
 - ✅ Déconnexion
+
+### Gestion des Cours (SOAP)
+- ✅ Affichage des cours
+- ✅ Ajout/Modification/Suppression (admin seulement)
+- ✅ Recherche et filtrage
+- ✅ Interface responsive
+
+### Gestion des Étudiants
+- ✅ Liste des étudiants
+- ✅ Détails étudiant
+- ✅ Statistiques
+
+### Gestion des Utilisateurs
+- ✅ Liste des utilisateurs (admin)
+- ✅ Gestion des rôles
+
+### Interface Utilisateur
+- ✅ Design moderne et responsive
+- ✅ Navigation intuitive
+- ✅ Gestion des erreurs
+- ✅ Loading states
+
+## 🛠️ Installation
+
+```bash
+# Installer les dépendances
+npm install
+```
+
+## 🚀 Démarrage
+
+```bash
+# Démarrer le serveur de développement
+npm run dev
+```
+
+L'application sera accessible sur `http://localhost:3000`
+
+## 📁 Structure du Projet
+
+```
+frontend/
+├── public/              # Assets statiques
+├── src/
+│   ├── components/      # Composants React
+│   │   ├── Auth/        # Composants d'authentification
+│   │   ├── Common/      # Composants communs
+│   │   ├── Courses/     # Gestion des cours
+│   │   ├── Layout/      # Layout et navigation
+│   │   ├── Students/    # Gestion des étudiants
+│   │   └── Users/       # Gestion des utilisateurs
+│   ├── context/         # Context React
+│   ├── services/        # Services API
+│   └── App.jsx          # App principale
+├── package.json
+└── vite.config.js       # Configuration Vite
+```
+
+## 🔐 Rôles et Permissions
+
+- **Étudiant** : Accès en lecture seule aux cours
+- **Enseignant** : Gestion des cours
+- **Admin** : Gestion complète du système
+
+## 🌐 API Endpoints
+
+- **Auth** : `/api/auth/*`
+- **Cours** : `/course-service` (SOAP)
+- **Étudiants** : `/api/students/*`
+- **Utilisateurs** : `/api/auth/users`
+
+## 📝 Scripts Disponibles
+
+- `npm run dev` - Démarre le serveur de développement
+- `npm run build` - Build pour la production
+- `npm run preview` - Prévisualisation du build
+- `npm run lint` - Vérification ESLint
+
+## 🔧 Configuration
+
+Le frontend utilise des proxies Vite pour éviter les problèmes CORS :
+
+- `/api` → `http://localhost:8080` (API Gateway)
+- `/course-service` → `http://localhost:8200` (Service SOAP)
+
+## 🤝 Contribution
+
+1. Fork le projet
+2. Créez une branche feature (`git checkout -b feature/AmazingFeature`)
+3. Committez vos changements (`git commit -m 'Add some AmazingFeature'`)
+4. Pushez vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrez une Pull Request
 - ✅ Routes protégées
 
 ### Gestion des Étudiants
