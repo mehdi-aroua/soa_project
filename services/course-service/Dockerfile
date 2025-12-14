@@ -1,21 +1,19 @@
-# Course Service Dockerfile (JAX-WS) - multi-stage
-FROM eclipse-temurin:17-jdk AS build
+FROM python:3.11-slim
 
-WORKDIR /workspace
-COPY src ./src
-COPY lib ./lib
-COPY jaxws-ri ./jaxws-ri
-
-RUN mkdir -p out && \
-    javac -cp "lib/*:jaxws-ri/lib/*" -d out $(find src -name "*.java")
-
-FROM eclipse-temurin:17-jre AS runtime
 WORKDIR /app
 
-COPY --from=build /workspace/out ./out
-COPY --from=build /workspace/lib ./lib
-COPY --from=build /workspace/jaxws-ri ./jaxws-ri
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy application code
+COPY app/ ./app/
+
+# Create data directory for SQLite database
+RUN mkdir -p /app/data
+
+# Expose port
 EXPOSE 8200
 
-CMD ["java", "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED", "--add-opens", "java.base/java.lang=ALL-UNNAMED", "-cp", "out:lib/*:jaxws-ri/lib/*", "com.university.course.CoursePublisher"]
+# Run the application
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8200"]

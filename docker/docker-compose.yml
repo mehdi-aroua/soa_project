@@ -35,8 +35,26 @@ services:
       context: ../services/course-service
       dockerfile: Dockerfile
     container_name: course-service
+    environment:
+      - COURSE_DATABASE_URL=sqlite:///./data/courses.db
     ports:
       - "8200:8200"
+    volumes:
+      - course-data:/app/data
+    networks:
+      - soa-net
+
+  note-service:
+    build:
+      context: ../services/note-service
+      dockerfile: Dockerfile
+    container_name: note-service
+    environment:
+      - NOTE_DATABASE_URL=sqlite:///./data/notes.db
+    ports:
+      - "8300:8300"
+    volumes:
+      - note-data:/app/data
     networks:
       - soa-net
 
@@ -49,6 +67,7 @@ services:
       - auth-service
       - student-service
       - course-service
+      - note-service
     ports:
       - "8080:8080"
     networks:
@@ -62,4 +81,8 @@ volumes:
   student-data:
     driver: local
   auth-data:
+    driver: local
+  note-data:
+    driver: local
+  course-data:
     driver: local

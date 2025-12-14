@@ -100,7 +100,7 @@ const Dashboard = () => {
                     </div>
 
                     <div className="action-card" onClick={() => navigate('/students')}>
-                        <div className="action-card-icon">�</div>
+                        <div className="action-card-icon">🔍</div>
                         <div className="action-card-label">Rechercher</div>
                     </div>
                 </div>

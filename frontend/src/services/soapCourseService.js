@@ -35,21 +35,29 @@ const createSoapEnvelope = (method, params = {}) => {
 const soapRequest = async (method, params = {}) => {
     const envelope = createSoapEnvelope(method, params);
 
-    const response = await fetch(SOAP_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'text/xml; charset=utf-8',
-            'SOAPAction': '',
-        },
-        body: envelope,
-    });
+    try {
+        const response = await fetch(SOAP_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/xml; charset=utf-8',
+                'SOAPAction': '',
+            },
+            body: envelope,
+        });
 
-    if (!response.ok) {
-        throw new Error(`SOAP request failed: ${response.status}`);
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('SOAP HTTP Error:', response.status, errorText);
+            throw new Error(`SOAP request failed: ${response.status} - ${errorText}`);
+        }
+
+        const xmlText = await response.text();
+        console.log(`SOAP Response for ${method}:`, xmlText);
+        return parseXmlResponse(xmlText, method);
+    } catch (error) {
+        console.error(`SOAP Error for ${method}:`, error);
+        throw error;
     }
-
-    const xmlText = await response.text();
-    return parseXmlResponse(xmlText, method);
 };
 
 /**
@@ -61,19 +69,48 @@ const parseXmlResponse = (xmlText, method) => {
 
     // Check for SOAP fault
     const fault = xmlDoc.getElementsByTagName('S:Fault')[0] ||
-        xmlDoc.getElementsByTagName('soap:Fault')[0];
+        xmlDoc.getElementsByTagName('soap:Fault')[0] ||
+        xmlDoc.getElementsByTagName('Fault')[0];
     if (fault) {
-        const faultString = fault.getElementsByTagName('faultstring')[0]?.textContent;
-        throw new Error(faultString || 'SOAP Fault');
+        const faultString = fault.getElementsByTagName('faultstring')[0]?.textContent ||
+            fault.getElementsByTagName('detail')[0]?.textContent ||
+            'SOAP Fault';
+        throw new Error(faultString);
     }
 
-    // Extract response based on method
+    // For methods that return strings (add, update, delete, enroll, unenroll)
+    if (['addCourse', 'updateCourse', 'deleteCourse', 'enrollStudent', 'unenrollStudent'].includes(method)) {
+        // Try to find return element with string content
+        const returnElements = xmlDoc.getElementsByTagName('return');
+        if (returnElements.length > 0) {
+            return returnElements[0].textContent;
+        }
+        // Try to find the method response element
+        const responseTag = `${method}Response`;
+        const responseElement = xmlDoc.getElementsByTagNameNS(NAMESPACE, responseTag)[0] ||
+            xmlDoc.querySelector(`[*|${responseTag}]`);
+        if (responseElement) {
+            const returnEl = responseElement.getElementsByTagName('return')[0];
+            return returnEl ? returnEl.textContent : responseElement.textContent;
+        }
+        // Fallback: return the entire response text
+        return xmlText;
+    }
+
+    // For methods that return objects or arrays
     const responseTag = `${method}Response`;
     const responseElement = xmlDoc.getElementsByTagNameNS(NAMESPACE, responseTag)[0] ||
-        xmlDoc.querySelector(`[*|${responseTag}]`);
+        xmlDoc.querySelector(`[*|${responseTag}]`) ||
+        xmlDoc.querySelector(`${responseTag}`); // Fallback without namespace
 
     if (!responseElement) {
-        // Try to find return elements directly
+        // Try to find return elements directly in the body
+        const body = xmlDoc.getElementsByTagName('Body')[0] ||
+            xmlDoc.getElementsByTagName('S:Body')[0] ||
+            xmlDoc.getElementsByTagName('soap:Body')[0];
+        if (body) {
+            return extractReturnData(body);
+        }
         return extractReturnData(xmlDoc);
     }
 
@@ -89,7 +126,10 @@ const extractReturnData = (element) => {
     if (returnElements.length === 0) {
         // Check for simple string response
         const textContent = element.textContent?.trim();
-        return textContent || null;
+        if (textContent && textContent !== '') {
+            return textContent;
+        }
+        return null;
     }
 
     if (returnElements.length === 1) {
@@ -98,13 +138,24 @@ const extractReturnData = (element) => {
         if (returnEl.children.length === 0) {
             return returnEl.textContent;
         }
-        return parseCourseElement(returnEl);
+        // Check if it's a Course object
+        if (returnEl.getElementsByTagName('id').length > 0) {
+            return parseCourseElement(returnEl);
+        }
+        // Other object types could be handled here
+        return returnEl.textContent;
     }
 
     // Multiple return elements = array
     const results = [];
     for (const returnEl of returnElements) {
-        results.push(parseCourseElement(returnEl));
+        if (returnEl.children.length === 0) {
+            // Simple value
+            results.push(returnEl.textContent);
+        } else {
+            // Object (likely Course)
+            results.push(parseCourseElement(returnEl));
+        }
     }
     return results;
 };

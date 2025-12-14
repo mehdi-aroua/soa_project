@@ -1,11 +1,29 @@
-target/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.log
+.DS_Store
+data/*.db
+data/*.db-shm
+data/*.db-wal
+
+# Keep Java files for reference but exclude from Docker
+src/
+bin/
+out/
+lib/
 *.class
 *.jar
-*.war
-*.ear
-bin/
-.git/
-.mvn/
-**/.DS_Store
-# Keep jaxws libs; exclude large archive
+jaxws-ri/
 jaxws-ri.zip
+*.xml

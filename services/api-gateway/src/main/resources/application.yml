@@ -29,6 +29,12 @@ spring:
           filters:
             # strip /soap/course -> forward to /course-service
             - StripPrefix=2
+
+        - id: note-service
+          uri: http://note-service:8300
+          predicates:
+            - Path=/notes/**
+
       globalcors:
         corsConfigurations:
           '[/**]':

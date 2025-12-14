@@ -91,6 +91,7 @@ def search_students(
             Student.nom.ilike(f"%{q}%"),
             Student.prenom.ilike(f"%{q}%"),
             Student.matricule.ilike(f"%{q}%"),
+            Student.email.ilike(f"%{q}%"),
         )
     )
     if page < 1:
@@ -99,6 +100,18 @@ def search_students(
         limit = 10
     offset = (page - 1) * limit
     return base.offset(offset).limit(limit).all()
+
+# GET STUDENT BY EMAIL (must come before /students/{student_id})
+@router.get("/students/by-email/{email}", response_model=StudentOut)
+def get_student_by_email(email: str, db: Session = Depends(get_db)):
+    student = (
+        db.query(Student)
+        .filter(and_(Student.email == email, Student.deleted_at.is_(None)))
+        .first()
+    )
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    return student
 
 # READ ONE (exclude soft-deleted)
 @router.get("/students/{student_id}", response_model=StudentOut)

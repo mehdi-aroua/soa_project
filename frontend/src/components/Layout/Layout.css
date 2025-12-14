@@ -245,6 +245,33 @@
     }
 }
 
+@media (max-width: 768px) {
+    .navbar {
+        padding: 1rem;
+    }
+
+    .navbar-brand h2 {
+        font-size: 1.2rem;
+    }
+
+    .user-info {
+        display: none;
+    }
+
+    .sidebar {
+        width: 200px;
+    }
+
+    .main-content {
+        margin-left: 200px;
+        padding: 1rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 480px) {
     .sidebar {
         transform: translateX(-100%);

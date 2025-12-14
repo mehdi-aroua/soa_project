@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import soapCourseService from '../../services/soapCourseService';
+import courseService from '../../services/courseService';
 import ErrorMessage from '../Common/ErrorMessage';
 
 const CourseForm = ({ course, onSuccess, onCancel }) => {
     const [formData, setFormData] = useState({
-        id: '',
         code: '',
-        nom: '',
+        name: '',
         description: '',
         credits: 6,
-        heures: 45,
+        hours: 45,
         filiere: 'INFO',
         niveau: 'L1',
         salle: '',
-        enseignantId: 0,
+        enseignant_id: null,
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -21,16 +20,15 @@ const CourseForm = ({ course, onSuccess, onCancel }) => {
     useEffect(() => {
         if (course) {
             setFormData({
-                id: course.id || '',
                 code: course.code || '',
-                nom: course.nom || course.name || '',
+                name: course.name || '',
                 description: course.description || '',
                 credits: course.credits || 6,
-                heures: course.heures || course.hours || 45,
+                hours: course.hours || 45,
                 filiere: course.filiere || 'INFO',
                 niveau: course.niveau || 'L1',
                 salle: course.salle || '',
-                enseignantId: course.enseignantId || 0,
+                enseignant_id: course.enseignant_id || null,
             });
         }
     }, [course]);
@@ -51,20 +49,16 @@ const CourseForm = ({ course, onSuccess, onCancel }) => {
         try {
             if (course) {
                 // Update existing course
-                const result = await soapCourseService.updateCourse(course.id, formData);
+                const result = await courseService.updateCourse(course.id, formData);
                 console.log('Update result:', result);
             } else {
-                // Create new course - need to generate an ID
-                const dataWithId = {
-                    ...formData,
-                    id: formData.id || Date.now(), // Use timestamp as simple ID generator
-                };
-                const result = await soapCourseService.createCourse(dataWithId);
+                // Create new course
+                const result = await courseService.createCourse(formData);
                 console.log('Create result:', result);
             }
             onSuccess();
         } catch (err) {
-            console.error('SOAP Error:', err);
+            console.error('REST API Error:', err);
             setError(err.message || 'Erreur lors de l\'enregistrement');
         } finally {
             setLoading(false);
@@ -75,21 +69,7 @@ const CourseForm = ({ course, onSuccess, onCancel }) => {
         <form onSubmit={handleSubmit} className="course-form">
             <ErrorMessage message={error} onClose={() => setError('')} />
 
-            {!course && (
-                <div className="form-group">
-                    <label htmlFor="id">ID du cours *</label>
-                    <input
-                        type="number"
-                        id="id"
-                        name="id"
-                        value={formData.id}
-                        onChange={handleChange}
-                        required
-                        min="1"
-                        placeholder="Ex: 3"
-                    />
-                </div>
-            )}
+
 
             <div className="form-row">
                 <div className="form-group">
@@ -106,12 +86,12 @@ const CourseForm = ({ course, onSuccess, onCancel }) => {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="nom">Nom du cours *</label>
+                    <label htmlFor="name">Nom du cours *</label>
                     <input
                         type="text"
-                        id="nom"
-                        name="nom"
-                        value={formData.nom}
+                        id="name"
+                        name="name"
+                        value={formData.name}
                         onChange={handleChange}
                         required
                         placeholder="Ex: Base de Données"
@@ -147,12 +127,12 @@ const CourseForm = ({ course, onSuccess, onCancel }) => {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="heures">Heures *</label>
+                    <label htmlFor="hours">Heures *</label>
                     <input
                         type="number"
-                        id="heures"
-                        name="heures"
-                        value={formData.heures}
+                        id="hours"
+                        name="hours"
+                        value={formData.hours}
                         onChange={handleChange}
                         required
                         min="1"

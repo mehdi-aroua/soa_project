@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import studentService from '../../services/studentService';
 import StudentForm from './StudentForm';
+import StudentNotesModal from './StudentNotesModal';
 import Modal from '../Common/Modal';
 import Loading from '../Common/Loading';
 import ErrorMessage from '../Common/ErrorMessage';
@@ -13,6 +14,8 @@ const StudentList = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingStudent, setEditingStudent] = useState(null);
+    const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
+    const [selectedStudentForNotes, setSelectedStudentForNotes] = useState(null);
 
     useEffect(() => {
         loadStudents();
@@ -75,6 +78,11 @@ const StudentList = () => {
         setIsModalOpen(false);
         setEditingStudent(null);
         loadStudents();
+    };
+
+    const handleShowNotes = (student) => {
+        setSelectedStudentForNotes(student);
+        setIsNotesModalOpen(true);
     };
 
     if (loading && students.length === 0) {
@@ -155,14 +163,23 @@ const StudentList = () => {
                                     <td>
                                         <div className="action-buttons">
                                             <button
+                                                onClick={() => handleShowNotes(student)}
+                                                className="btn btn-sm btn-info"
+                                                title="Voir/Ajouter notes"
+                                            >
+                                                📊
+                                            </button>
+                                            <button
                                                 onClick={() => handleEdit(student)}
                                                 className="btn btn-sm btn-secondary"
+                                                title="Modifier"
                                             >
                                                 ✏️
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(student.id)}
                                                 className="btn btn-sm btn-danger"
+                                                title="Supprimer"
                                             >
                                                 🗑️
                                             </button>
@@ -186,6 +203,12 @@ const StudentList = () => {
                     onCancel={() => setIsModalOpen(false)}
                 />
             </Modal>
+
+            <StudentNotesModal
+                isOpen={isNotesModalOpen}
+                onClose={() => setIsNotesModalOpen(false)}
+                student={selectedStudentForNotes}
+            />
         </div>
     );
 };

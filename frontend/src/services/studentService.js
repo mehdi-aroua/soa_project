@@ -38,6 +38,12 @@ const studentService = {
         return response.data;
     },
 
+    // Get student by email
+    getStudentByEmail: async (email) => {
+        const response = await api.get(`/students/by-email/${encodeURIComponent(email)}`);
+        return response.data;
+    },
+
     // Search students
     searchStudents: async (query, page = 1, limit = 10) => {
         const response = await api.get(`/students/search?q=${query}&page=${page}&limit=${limit}`);
